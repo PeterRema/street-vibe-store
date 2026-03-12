@@ -11,13 +11,14 @@ tags:
     description: Health operations
   - name: products
     description: Product catalog operations
+  - name: settings
+    description: Site settings
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -30,7 +31,6 @@ paths:
       operationId: listProducts
       tags: [products]
       summary: List all products
-      description: Returns all products in the catalog
       parameters:
         - name: category
           in: query
@@ -86,7 +86,36 @@ paths:
               schema:
                 $ref: "#/components/schemas/Product"
         "404":
-          description: Product not found
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      operationId: updateProduct
+      tags: [products]
+      summary: Update a product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProductRequest"
+      responses:
+        "200":
+          description: Product updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "404":
+          description: Not found
           content:
             application/json:
               schema:
@@ -103,9 +132,9 @@ paths:
             type: integer
       responses:
         "204":
-          description: Product deleted
+          description: Deleted
         "404":
-          description: Product not found
+          description: Not found
           content:
             application/json:
               schema:
@@ -128,6 +157,59 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Inquiry"
+  /settings:
+    get:
+      operationId: getSettings
+      tags: [settings]
+      summary: Get site settings
+      responses:
+        "200":
+          description: Site settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteSettings"
+    put:
+      operationId: updateSettings
+      tags: [settings]
+      summary: Update site settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SiteSettings"
+      responses:
+        "200":
+          description: Settings updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteSettings"
+  /upload:
+    post:
+      operationId: uploadImage
+      tags: [products]
+      summary: Upload an image
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+              required:
+                - file
+      responses:
+        "200":
+          description: Upload successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadResponse"
 components:
   schemas:
     HealthStatus:
@@ -238,6 +320,29 @@ components:
         - name
         - email
         - createdAt
+    SiteSettings:
+      type: object
+      properties:
+        wipEnabled:
+          type: boolean
+        wipCountdown:
+          type: string
+          nullable: true
+        wipMessage:
+          type: string
+          nullable: true
+      required:
+        - wipEnabled
+    UploadResponse:
+      type: object
+      properties:
+        url:
+          type: string
+        filename:
+          type: string
+      required:
+        - url
+        - filename
     ErrorResponse:
       type: object
       properties:

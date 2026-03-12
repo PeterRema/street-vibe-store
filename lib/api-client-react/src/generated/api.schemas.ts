@@ -63,6 +63,17 @@ export interface Inquiry {
   createdAt: string;
 }
 
+export interface SiteSettings {
+  wipEnabled: boolean;
+  wipCountdown?: string | null;
+  wipMessage?: string | null;
+}
+
+export interface UploadResponse {
+  url: string;
+  filename: string;
+}
+
 export interface ErrorResponse {
   error: string;
 }
@@ -80,3 +91,7 @@ export const ListProductsCategory = {
   pants: "pants",
   all: "all",
 } as const;
+
+export type UploadImageBody = {
+  file: Blob;
+};

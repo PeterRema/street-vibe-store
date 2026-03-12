@@ -6,6 +6,8 @@ import {
   CreateProductBody,
   ListProductsQueryParams,
   GetProductParams,
+  UpdateProductParams,
+  UpdateProductBody,
   DeleteProductParams,
   CreateInquiryBody,
 } from "@workspace/api-zod";
@@ -76,6 +78,32 @@ router.get("/products/:id", async (req, res) => {
     res.json(product);
   } catch (err) {
     res.status(400).json({ error: "Invalid product ID" });
+  }
+});
+
+router.put("/products/:id", async (req, res) => {
+  try {
+    const { id } = UpdateProductParams.parse({ id: Number(req.params.id) });
+    const body = UpdateProductBody.parse(req.body);
+    const [updated] = await db
+      .update(productsTable)
+      .set({
+        name: body.name,
+        description: body.description,
+        category: body.category,
+        imageUrl: body.imageUrl ?? null,
+        sizes: body.sizes,
+        featured: body.featured ?? false,
+      })
+      .where(eq(productsTable.id, id))
+      .returning();
+
+    if (!updated) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+    res.json(updated);
+  } catch (err) {
+    res.status(400).json({ error: "Invalid product data" });
   }
 });
 

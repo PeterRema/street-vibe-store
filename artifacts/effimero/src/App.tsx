@@ -1,5 +1,5 @@
-import { Switch, Route, Router as WouterRouter } from "wouter";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
+import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppLayout } from "@/components/layout/AppLayout";
@@ -9,6 +9,7 @@ import Shop from "@/pages/Shop";
 import ProductDetail from "@/pages/ProductDetail";
 import About from "@/pages/About";
 import Admin from "@/pages/Admin";
+import WorkInProgress from "@/pages/WorkInProgress";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -19,7 +20,45 @@ const queryClient = new QueryClient({
   },
 });
 
-function Router() {
+interface SiteSettings {
+  wipEnabled: boolean;
+  wipCountdown?: string | null;
+  wipMessage?: string | null;
+}
+
+async function fetchSettings(): Promise<SiteSettings> {
+  const res = await fetch("/api/settings");
+  if (!res.ok) throw new Error("Failed to fetch settings");
+  return res.json();
+}
+
+function AppRoutes() {
+  const [location] = useLocation();
+  const isAdmin = location === "/admin" || location.startsWith("/admin");
+
+  const { data: settings, isLoading } = useQuery({
+    queryKey: ["/api/settings"],
+    queryFn: fetchSettings,
+    staleTime: 1000 * 30,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="w-1 h-8 bg-primary animate-pulse" />
+      </div>
+    );
+  }
+
+  if (settings?.wipEnabled && !isAdmin) {
+    return (
+      <WorkInProgress
+        countdown={settings.wipCountdown}
+        message={settings.wipMessage}
+      />
+    );
+  }
+
   return (
     <AppLayout>
       <Switch>
@@ -39,7 +78,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-          <Router />
+          <AppRoutes />
         </WouterRouter>
         <Toaster />
       </TooltipProvider>

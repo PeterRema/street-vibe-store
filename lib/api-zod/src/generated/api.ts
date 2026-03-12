@@ -8,7 +8,6 @@
 import * as zod from "zod";
 
 /**
- * Returns server health status
  * @summary Health check
  */
 export const HealthCheckResponse = zod.object({
@@ -16,7 +15,6 @@ export const HealthCheckResponse = zod.object({
 });
 
 /**
- * Returns all products in the catalog
  * @summary List all products
  */
 export const ListProductsQueryParams = zod.object({
@@ -67,6 +65,33 @@ export const GetProductResponse = zod.object({
 });
 
 /**
+ * @summary Update a product
+ */
+export const UpdateProductParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const UpdateProductBody = zod.object({
+  name: zod.string(),
+  description: zod.string(),
+  category: zod.enum(["tshirts", "pants"]),
+  imageUrl: zod.string().nullish(),
+  sizes: zod.array(zod.string()),
+  featured: zod.boolean().optional(),
+});
+
+export const UpdateProductResponse = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  description: zod.string(),
+  category: zod.enum(["tshirts", "pants"]),
+  imageUrl: zod.string().nullish(),
+  sizes: zod.array(zod.string()),
+  featured: zod.boolean(),
+  createdAt: zod.date(),
+});
+
+/**
  * @summary Delete a product
  */
 export const DeleteProductParams = zod.object({
@@ -82,4 +107,40 @@ export const CreateInquiryBody = zod.object({
   email: zod.string(),
   message: zod.string().nullish(),
   size: zod.string().nullish(),
+});
+
+/**
+ * @summary Get site settings
+ */
+export const GetSettingsResponse = zod.object({
+  wipEnabled: zod.boolean(),
+  wipCountdown: zod.string().nullish(),
+  wipMessage: zod.string().nullish(),
+});
+
+/**
+ * @summary Update site settings
+ */
+export const UpdateSettingsBody = zod.object({
+  wipEnabled: zod.boolean(),
+  wipCountdown: zod.string().nullish(),
+  wipMessage: zod.string().nullish(),
+});
+
+export const UpdateSettingsResponse = zod.object({
+  wipEnabled: zod.boolean(),
+  wipCountdown: zod.string().nullish(),
+  wipMessage: zod.string().nullish(),
+});
+
+/**
+ * @summary Upload an image
+ */
+export const UploadImageBody = zod.object({
+  file: zod.instanceof(File),
+});
+
+export const UploadImageResponse = zod.object({
+  url: zod.string(),
+  filename: zod.string(),
 });

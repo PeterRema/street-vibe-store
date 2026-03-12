@@ -16,3 +16,6 @@ export * from "./listProductsCategory";
 export * from "./listProductsParams";
 export * from "./product";
 export * from "./productCategory";
+export * from "./siteSettings";
+export * from "./uploadImageBody";
+export * from "./uploadResponse";

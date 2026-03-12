@@ -1,11 +1,12 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useListProducts, useCreateProduct, useDeleteProduct, useUpdateProduct } from "@workspace/api-client-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Loader2, Plus, Trash2, Pencil, X, Check, Upload, Power, Calendar, Image } from "lucide-react";
+import { Loader2, Plus, Trash2, Pencil, X, Check, Upload, Power, Calendar, Image, LogOut } from "lucide-react";
 import type { ListProductsResponseItem as Product } from "@workspace/api-client-react";
+import AdminLogin from "@/pages/AdminLogin";
 
 interface SiteSettings {
   wipEnabled: boolean;
@@ -50,7 +51,7 @@ type ProductForm = z.infer<typeof productSchema>;
 
 type AdminTab = "settings" | "products" | "create" | "edit";
 
-export default function Admin() {
+function AdminPanel({ onLogout }: { onLogout: () => void }) {
   const qc = useQueryClient();
   const [activeTab, setActiveTab] = useState<AdminTab>("settings");
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -183,12 +184,22 @@ export default function Admin() {
             </span>
             <h1 className="text-4xl font-serif">Pannello Admin</h1>
           </div>
-          <a
-            href="/"
-            className="text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors border-b border-transparent hover:border-muted-foreground pb-0.5"
-          >
-            Torna al Sito
-          </a>
+          <div className="flex items-center gap-6">
+            <a
+              href="/"
+              className="text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors border-b border-transparent hover:border-muted-foreground pb-0.5"
+            >
+              Torna al Sito
+            </a>
+            <button
+              onClick={onLogout}
+              className="flex items-center gap-2 text-xs tracking-widest uppercase text-muted-foreground hover:text-primary transition-colors"
+              title="Esci"
+            >
+              <LogOut size={14} strokeWidth={1.5} />
+              Esci
+            </button>
+          </div>
         </div>
 
         {/* Tabs */}
@@ -532,4 +543,44 @@ export default function Admin() {
       </div>
     </div>
   );
+}
+
+export default function Admin() {
+  const [token, setToken] = useState<string | null>(null);
+  const [checking, setChecking] = useState(true);
+
+  useEffect(() => {
+    const stored = sessionStorage.getItem("effimero_admin_token");
+    if (!stored) { setChecking(false); return; }
+    fetch("/api/admin/verify", { headers: { "x-admin-token": stored } })
+      .then(r => r.json())
+      .then(d => {
+        if (d.valid) setToken(stored);
+        else sessionStorage.removeItem("effimero_admin_token");
+      })
+      .catch(() => sessionStorage.removeItem("effimero_admin_token"))
+      .finally(() => setChecking(false));
+  }, []);
+
+  const handleLogout = async () => {
+    if (token) {
+      await fetch("/api/admin/logout", { method: "POST", headers: { "x-admin-token": token } }).catch(() => {});
+    }
+    sessionStorage.removeItem("effimero_admin_token");
+    setToken(null);
+  };
+
+  if (checking) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 size={24} className="animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  if (!token) {
+    return <AdminLogin onLogin={setToken} />;
+  }
+
+  return <AdminPanel onLogout={handleLogout} />;
 }

@@ -4,6 +4,17 @@
 
 pnpm workspace monorepo using TypeScript. Each package manages its own dependencies.
 
+## Artifacts
+
+### `artifacts/effimero` — effimero. streetwear brand website
+- React + Vite web app at `/`
+- 5 pages: Home, Shop, Product Detail, About, Admin
+- No prices — "Richiedi Info" button on every product
+- Admin page at `/admin` to upload new products (no auth)
+- Inquiry form modal for users to request info
+- Minimal editorial style: black/white + red accent, Japan/Korean streetwear aesthetic
+- Logo: `public/logo.png` (effimero. serif text)
+
 ## Stack
 
 - **Monorepo tool**: pnpm workspaces

@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "effimero."
+version = "1.0.0"
+id = "artifacts/effimero"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+localPort = 24047
+name = "web"
+paths = ["/"]
+
+[services.development]
+run = "pnpm --filter @workspace/effimero run dev"
+
+[services.env]
+PORT = "24047"
+BASE_PATH = "/"
+
+[services.production]
+build = ["pnpm", "--filter", "@workspace/effimero", "run", "build"]
+publicDir = "artifacts/effimero/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"

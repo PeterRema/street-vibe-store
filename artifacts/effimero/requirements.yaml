@@ -1,0 +1,21 @@
+packages:
+  "framer-motion": "For high-end, smooth page transitions and editorial micro-interactions"
+  "@hookform/resolvers": "For Zod form validation with react-hook-form"
+  "react-hook-form": "For robust form state management in Admin and Inquiry modals"
+  "zod": "For schema validation in forms"
+
+images:
+  - path: "artifacts/effimero/public/images/hero-bg.png"
+    description: "High fashion editorial black and white studio shot of an abstract mannequin wearing oversized avant-garde streetwear, heavy contrast, film grain, subtle red light leak"
+    aspect_ratio: "16:9"
+  - path: "artifacts/effimero/public/images/manifesto.png"
+    description: "Abstract brutalist architectural element in concrete with a single striking red fabric draped over it, minimalist composition"
+    aspect_ratio: "3:4"
+  - path: "artifacts/effimero/public/images/about-editorial.png"
+    description: "Close up fashion photography of textured black fabric with a subtle red stitch, moody lighting, highly detailed"
+    aspect_ratio: "4:3"
+
+notes:
+  - Uses pre-generated TanStack Query hooks from @workspace/api-client-react
+  - Assumes Vite configuration has @assets alias mapped correctly as instructed
+  - Follows Zara-esque editorial style: sharp edges, heavy typography, striking contrast

@@ -5,7 +5,7 @@ import { z } from "zod";
 import { useListProducts, useCreateProduct, useDeleteProduct, useUpdateProduct } from "@workspace/api-client-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2, Plus, Trash2, Pencil, X, Check, Upload, Power, Calendar, Image, LogOut } from "lucide-react";
-import type { ListProductsResponseItem as Product } from "@workspace/api-client-react";
+import type { Product } from "@workspace/api-client-react";
 import AdminLogin from "@/pages/AdminLogin";
 
 interface SiteSettings {

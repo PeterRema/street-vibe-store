@@ -5,7 +5,7 @@ import { z } from "zod";
 import { X, Loader2, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCreateInquiry } from "@workspace/api-client-react";
-import type { ListProductsResponseItem as Product } from "@workspace/api-client-react";
+import type { Product } from "@workspace/api-client-react";
 
 const inquirySchema = z.object({
   name: z.string().min(2, "Il nome è richiesto"),
@@ -132,7 +132,7 @@ export function InquiryModal({ product, isOpen, onClose }: InquiryModalProps) {
                         defaultValue=""
                       >
                         <option value="" disabled className="text-muted-foreground">Seleziona Taglia</option>
-                        {product.sizes.map((s) => (
+                        {product.sizes.map((s: string) => (
                           <option key={s} value={s}>{s}</option>
                         ))}
                       </select>

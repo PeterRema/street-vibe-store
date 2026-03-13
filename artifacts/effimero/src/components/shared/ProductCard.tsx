@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import type { ListProductsResponseItem as Product } from "@workspace/api-client-react";
+import type { Product } from "@workspace/api-client-react";
 
 export function ProductCard({ product }: { product: Product }) {
   return (
